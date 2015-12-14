@@ -10,6 +10,9 @@ import ceylon.io {
 	SocketAddress
 }
 
+// The example is partly copied from the ceylon.net documentation.
+// https://modules.ceylon-lang.org/repo/1/ceylon/net/1.2.0/module-doc/api/index.html
+
 shared void runServer() {
 	   //create a HTTP server
     value server = newServer {
