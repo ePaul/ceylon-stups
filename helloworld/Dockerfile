@@ -25,5 +25,5 @@ COPY scm-source.json /scm-source.json
 STOPSIGNAL SIGINT
 
 EXPOSE 8080
-CMD ceylon run --rep=/ceylon-modules --cache=/ceylon-cache org.zalando.ceylon_stups.helloWorld
+CMD ceylon run --verbose --rep=/ceylon-modules --cache=/ceylon-cache org.zalando.ceylon_stups.helloWorld
 
