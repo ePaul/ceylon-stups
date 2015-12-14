@@ -36,7 +36,7 @@ shared void runServer() {
 		}
 	};
 	//start the server on port 8080
-	server.start(SocketAddress("127.0.0.1", 8080));
+	server.start(SocketAddress("0.0.0.0", 8080));
 }
 
 
