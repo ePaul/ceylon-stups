@@ -5,3 +5,5 @@
 .settings
 modules/
 scm-source.json
+cache
+helloworld.yaml
