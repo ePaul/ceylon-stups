@@ -23,14 +23,14 @@ shared void runServer() {
 			path = startsWith("/hello");
 			//handle requests to this path
 			void service(Request request, Response response) {
-				print(request);
+				print("Serving ``request.uri``");
 				response.writeString("hello world");
 			}
 		},
 		Endpoint {
 			path = startsWith("/dice");
 			void service(Request request, Response response) {
-				print(request);
+				print("Serving ``request.uri``");
 				response.writeString("You rolled `` (random() * 6).integer + 1 `` and `` (random() * 6).integer + 1 ``");
 			}
 		}
