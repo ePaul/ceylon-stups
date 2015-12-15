@@ -1,0 +1,17 @@
+name: "Check »Heartbeat« for Hello app"
+description:
+  Checks the heartbeat for all running instances of the "ceylon-stups-helloworld" application.
+status: ACTIVE
+interval: 120
+entities:
+  - type: instance
+    infrastructure_account: "aws:243385153324"
+    stack_name: ceylon-stups-helloworld
+command: |
+  http(":8080/hello").code()
+owning_team: Hackweek
+# OPTIONAL FIELDS
+#technical_details: Optional Technical Details
+#potential_analysis: Optional Potential analysis
+#potential_impact: Optional potential impact
+#potential_solution: Optional potential solution

@@ -1,0 +1,19 @@
+id: 6414
+check_definition_id: 2987
+name: Hello heartbeat failed!
+team: Einkaufshelden/Hackweek/Stups-Ceylon
+responsible_team: Einkaufshelden
+description: |-
+  Will be alerted when there is an instance with broken heartbeat.
+condition: |-
+  value != 200
+entities: []
+entities_exclude: []
+status: ACTIVE
+last_modified_by: pebermann
+last_modified: 1450188862444
+notifications: []
+period: ''
+priority: 2
+template: false
+
