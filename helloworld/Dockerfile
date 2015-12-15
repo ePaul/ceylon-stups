@@ -18,12 +18,14 @@ RUN apt-key add /root/ceylon-debian-repo.gpg.key && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* 
 
-COPY modules ceylon-modules
-COPY cache   ceylon-cache
+COPY modules /ceylon-modules
+COPY cache   /ceylon-cache
+# Make those readable for a non-privileged user
+RUN chmod -R o+r /ceylon-modules /ceylon-cache
 COPY scm-source.json /scm-source.json
 
 STOPSIGNAL SIGINT
 
 EXPOSE 8080
-CMD ceylon run --verbose --rep=/ceylon-modules --cache=/ceylon-cache org.zalando.ceylon_stups.helloWorld
+CMD ceylon run --verbose --rep=/ceylon-modules --cacherep=/ceylon-cache org.zalando.ceylon_stups.helloWorld
 
