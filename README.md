@@ -76,6 +76,26 @@ It seems like out Eventlog stuff is not yet open-source. So no point in embeddin
    Though it looks like Alabama is more for the use case Ceylon → JSON → Ceylon, not a generic Ceylon ←→ JSON serializer.
 
 * A better idea might be to generate the DTO classes from Swagger, and then either
-   * see if Jackson/Gson are able to handle that, or
-   * also generate a custom serializer/deserializer (possibly based on ceylon.json).
+   * see if Jackson/Gson are able to handle that.
+   * Alternative: also generate a custom serializer/deserializer (possibly based on ceylon.json).
 
+Current state:
+
+* We have a new language `ceylon` in Swagger-codegen (which generates just the model classes
+    + module.ceylon/package.ceylon for now).
+* Using this, we can generate DTOs from the Swagger API yaml:
+
+       rm -r helloworld/generated-sources && \
+         java -jar <path>/swagger-codegen-cli.jar generate \
+          -l ceylon \
+          -i helloworld/source/org/zalando/ceylon_stups/helloWorld/api/swagger-api.yaml \
+          -o helloworld/generated-sources \
+          -c helloworld/api-model-generator.json
+
+* Adapted the server code to create instances of those objects and pass them to Jackson's ObjectMapper.
+* We need to add dependencies to maven modules.
+* When running the server, it immediately crashed with a ClassNotFoundException (about javax.crypto.Cipher)
+  in the module loader. Something is broken there. Running with `--flat-classpath` works.
+    * I need to file a bug about this.
+* Jackson goes into an infinite recursion when serializing a field of type `String?` or `Integer?` (loop of `Character->successor` or `Integer->successor`), same with a `List<Integer>`. Non-optional `String` fields work (they are handled as plain Java Strings internally).
+    * maybe we need some plugin for Jackson to be able to handle Ceylon classes.

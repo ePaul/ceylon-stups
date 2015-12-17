@@ -1,0 +1,60 @@
+swagger: '2.0'
+info:
+  version: 0.1
+  title: Ceylon-Stups Hello World API
+  description: an example API to see if we can get swagger to work with Ceylon.
+  
+  contact:
+    name: Paul Ebermann
+    email: Paul.Ebermann@zalando.de
+
+schemes:
+  - https
+
+basePath: /
+  
+paths:
+  /hello:
+    get:
+      summary: retrieve a hello world message.
+      description:
+        This operations takes no parameters (yet).
+      responses:
+        200:
+          description: no failure.
+          schema:
+            $ref: '#definitions/hello_message'
+  /dice:
+    get:
+      summary: throw some dice and get the result.
+      parameters:
+        - name: count
+          in: query
+          default: 2
+          type: integer
+          format: int64
+      responses:
+        200:
+          schema:
+            $ref: '#definitions/dices'
+          description: dice throw okay.
+             
+definitions:
+  hello_message:
+    type: object
+    description: the message.
+    properties:
+      greeting:
+        type: string
+    required: ['greeting']
+  dices:
+    type: object
+    description: the result of a dice throw.
+    properties:
+      results:
+        type: array
+        items:
+          type: integer
+          format: int64
+    required:
+      - results

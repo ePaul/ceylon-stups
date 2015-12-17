@@ -11,11 +11,29 @@ import ceylon.net.http.server {
 import ceylon.io {
 	SocketAddress
 }
+import com.fasterxml.jackson.databind {
+	ObjectMapper,
+	SerializationFeature
+}
+import com.fasterxml.jackson.core {
+	JsonFactory
+}
+import org.zalando.ceylon_stups.helloWorldApi.model {
+	HelloMessage,
+	Dices
+}
 
 // The example is partly copied from the ceylon.net documentation.
 // https://modules.ceylon-lang.org/repo/1/ceylon/net/1.2.0/module-doc/api/index.html
 
 shared void runServer() {
+	
+	Dices rollDices(Integer count) =>
+			Dices { results = { (random() * 6).integer + 1 }.repeat(count).sequence(); };
+	
+	value mapper = ObjectMapper(null of JsonFactory?);
+	mapper.configure(SerializationFeature.\iINDENT_OUTPUT, true);
+	
 	//create a HTTP server
 	value server = newServer {
 		//an endpoint, on the path /hello
@@ -24,14 +42,20 @@ shared void runServer() {
 			//handle requests to this path
 			void service(Request request, Response response) {
 				print("Serving ``request.uri``");
-				response.writeString("hello world");
+				value result = HelloMessage("Hello World!");
+				value bytes = mapper.writeValueAsBytes(result);
+				response.writeBytes(bytes.byteArray);
+				//response.writeString(result.string);
 			}
 		},
 		Endpoint {
 			path = startsWith("/dice");
 			void service(Request request, Response response) {
 				print("Serving ``request.uri``");
-				response.writeString("You rolled `` (random() * 6).integer + 1 `` and `` (random() * 6).integer + 1 ``");
+				value count = parseInteger(request.parameter("count") else "2") else 2;
+				value result = rollDices(count);
+				value bytes = mapper.writeValueAsBytes(result);
+				response.writeBytes(bytes.byteArray);
 			}
 		}
 	};
