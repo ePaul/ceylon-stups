@@ -45,9 +45,37 @@
  
    → https://ceylon-stups-helloworld.hackweek.zalan.do/dice works too.
  
- ## ZMON
+## ZMON
  
  * Create check → zmon-checks/hello-check-heartbeat.yaml (use `zmon check-definitions update ...`).
  * Create alert (this currently works only in the ZMON web UI) → result is in zmon-checks/heartbeat-alert.yaml
  
+## Scalyr
  
+ * create personal account at Scalyr
+ * Get invited to the aws+hackweek account, link to your account
+ * look at https://www.scalyr.com/help/install-agent-linux,
+    copy the API key into senza's definition file helloworld.yaml (as TaupageConfig/scalyr_account_key).
+
+## Exception Monitor
+
+Exception log collection doesn't work on the Stups platform.
+Maybe this can be emulated using Scalyr (+ ZMON).
+
+## EventLog
+
+It seems like out Eventlog stuff is not yet open-source. So no point in embedding it here. Maybe later.
+
+## Swagger
+
+* There is [`ceylon.json`](https://modules.ceylon-lang.org/repo/1/ceylon/json/1.2.0/module-doc/api/index.html), which can represent JSON as a tree of Object|Array|(primitives), or the other way around.
+   This does not support custom type restrictions.
+
+* [This google groups thread](https://groups.google.com/forum/#!topic/ceylon-users/o_7XTLebotY) says there is a JSON←→Object serializer in the works (planned for 1.2.1). That is currently in [alabama](https://github.com/tombentley/alabama).
+
+   Though it looks like Alabama is more for the use case Ceylon → JSON → Ceylon, not a generic Ceylon ←→ JSON serializer.
+
+* A better idea might be to generate the DTO classes from Swagger, and then either
+   * see if Jackson/Gson are able to handle that, or
+   * also generate a custom serializer/deserializer (possibly based on ceylon.json).
+
