@@ -1,4 +1,4 @@
-# Ceylon for Stups
+# Ceylon for STUPS
 
 
 *TODO:* finish documentation.
@@ -29,9 +29,9 @@
    - docker build
    - (optional) docker push
 
-* to actually push to the correct registry, we need once do `stups configure stups.zalan.do` (or whatever your stups installation is), then `pierone login -u pebermann` (use your user name, of course).
+* to actually push to the correct registry, we need once do `stups configure stups.zalan.do` (or whatever your STUPS installation is), then `pierone login -u pebermann` (use your user name, of course).
 
-## Stups AWS deploy:
+## STUPS AWS deploy:
 
  - get personal account linked to AWS hackweek account
  - `mai login hackweek-PowerUser`
@@ -59,7 +59,7 @@
 
 ## Exception Monitor
 
-Exception log collection doesn't work on the Stups platform.
+Exception log collection doesn't work on the STUPS platform.
 Maybe this can be emulated using Scalyr (+ ZMON).
 
 ## EventLog
