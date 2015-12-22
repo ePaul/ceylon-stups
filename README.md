@@ -99,3 +99,8 @@ Current state:
     * I need to file a bug about this.
 * Jackson goes into an infinite recursion when serializing a field of type `String?` or `Integer?` (loop of `Character->successor` or `Integer->successor`), same with a `List<Integer>`. Non-optional `String` fields work (they are handled as plain Java Strings internally).
     * maybe we need some plugin for Jackson to be able to handle Ceylon classes.
+
+Different approach:
+
+* with the classes, generate JSON serializing functions/methods.
+* this needs no external dependencies.

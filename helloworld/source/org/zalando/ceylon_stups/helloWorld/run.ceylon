@@ -1,70 +1,100 @@
+import ceylon.io {
+    SocketAddress
+}
+import ceylon.json {
+    StringTokenizer
+}
+import ceylon.json.stream {
+    LookAhead,
+    StreamParser
+}
 import ceylon.math.float {
-	random
+    random
+}
+import ceylon.net.http {
+    get,
+    post
 }
 import ceylon.net.http.server {
-	newServer,
-	Endpoint,
-	Response,
-	Request,
-	startsWith
-}
-import ceylon.io {
-	SocketAddress
-}
-import com.fasterxml.jackson.databind {
-	ObjectMapper,
-	SerializationFeature
-}
-import com.fasterxml.jackson.core {
-	JsonFactory
-}
-import org.zalando.ceylon_stups.helloWorldApi.model {
-	HelloMessage,
-	Dices
+    newServer,
+    Endpoint,
+    Response,
+    Request,
+    startsWith
 }
 
-// The example is partly copied from the ceylon.net documentation.
+import org.zalando.ceylon_stups.helloWorldApi.helper {
+    ParseError
+}
+import org.zalando.ceylon_stups.helloWorldApi.model {
+    HelloMessage,
+    Dices,
+    Matrix,
+    parseJsonDices
+}
+
+// The example is adapted from the ceylon.net documentation.
 // https://modules.ceylon-lang.org/repo/1/ceylon/net/1.2.0/module-doc/api/index.html
 
 shared void runServer() {
-	
-	Dices rollDices(Integer count) =>
-			Dices { results = { (random() * 6).integer + 1 }.repeat(count).sequence(); };
-	
-	value mapper = ObjectMapper(null of JsonFactory?);
-	mapper.configure(SerializationFeature.\iINDENT_OUTPUT, true);
-	
-	//create a HTTP server
-	value server = newServer {
-		//an endpoint, on the path /hello
-		Endpoint {
-			path = startsWith("/hello");
-			//handle requests to this path
-			void service(Request request, Response response) {
-				print("Serving ``request.uri``");
-				value result = HelloMessage("Hello World!");
-				value bytes = mapper.writeValueAsBytes(result);
-				response.writeBytes(bytes.byteArray);
-				//response.writeString(result.string);
-			}
-		},
-		Endpoint {
-			path = startsWith("/dice");
-			void service(Request request, Response response) {
-				print("Serving ``request.uri``");
-				value count = parseInteger(request.parameter("count") else "2") else 2;
-				value result = rollDices(count);
-				value bytes = mapper.writeValueAsBytes(result);
-				response.writeBytes(bytes.byteArray);
-			}
-		}
-	};
-	//start the server on port 8080
-	server.start(SocketAddress("0.0.0.0", 8080));
+
+    Dices rollDices(Integer count) =>
+            Dices { results = { (random() * 6).integer + 1 }.repeat(count).sequence(); };
+    Matrix rollDiceMatrix(Integer count) =>
+            Matrix { results = { { (random() * 6).integer + 1 }.repeat(count).sequence() }.repeat(count).sequence(); };
+
+    //create a HTTP server
+    value server = newServer {
+        Endpoint {
+            path = startsWith("/hello");
+            void service(Request request, Response response) {
+                print("Serving GET ``request.uri``");
+                value result = HelloMessage("Hello World!");
+                response.writeString(result.json);
+            }
+        },
+        Endpoint {
+            path = startsWith("/diceMatrix");
+            void service(Request request, Response response) {
+                print("Serving GET ``request.uri``");
+                value count = parseInteger(request.parameter("count") else "2") else 2;
+                value result = rollDiceMatrix(count);
+                response.writeString(result.json);
+            }
+        },
+        Endpoint {
+            path = startsWith("/dice");
+            void service(Request request, Response response) {
+                print("Serving POST ``request.uri``");
+                value dices = parseJsonDices(LookAhead(StreamParser(StringTokenizer(request.read()))));
+                HelloMessage result;
+                if (is ParseError dices) {
+                    result = HelloMessage("invalid JSON!");
+                    response.responseStatus = 400;
+                } else {
+                    value count = dices.results.size;
+                    print("parsed dice: ``dices.json``, count: ``count``");
+                    result = HelloMessage("I parsed ``count`` dice throws, thank you.");
+                }
+                response.writeString(result.json);
+            }
+            post
+        },
+        Endpoint {
+            path = startsWith("/dice");
+            void service(Request request, Response response) {
+                print("Serving GET ``request.uri``");
+                value count = parseInteger(request.parameter("count") else "2") else 2;
+                value result = rollDices(count);
+                response.writeString(result.json);
+            }
+            get
+        }
+    };
+    //start the server on port 8080
+    server.start(SocketAddress("0.0.0.0", 8080));
 }
 
-
-"Run the module `org.zalando.ceylon_stups.helloWorld`."
 shared void run() {
-	runServer();
+    runServer();
 }

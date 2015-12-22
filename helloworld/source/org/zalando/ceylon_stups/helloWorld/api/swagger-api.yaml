@@ -38,15 +38,54 @@ paths:
           schema:
             $ref: '#definitions/dices'
           description: dice throw okay.
-             
+    post:
+      summary: store some pre-rolled dice
+      parameters:
+        - name: list
+          in: body
+          schema:
+            $ref: '#definitions/dices'
+      responses:
+        200:
+          description: okay
+          schema:
+            $ref: '#definitions/hello_message'
+  /diceMatrix:
+    get:
+      summary: throw some dice and get the result, in matrix form.
+      parameters:
+        - name: count
+          in: query
+          default: 3
+          type: integer
+          format: int64
+      responses:
+        200:
+          schema:
+            $ref: '#definitions/matrix'
+          description: dice throw okay.
+
 definitions:
   hello_message:
     type: object
     description: the message.
     properties:
       greeting:
+        description: bla
         type: string
     required: ['greeting']
+  matrix:
+    type: object
+    description: result of the dice throw, in matrix form
+    properties:
+      results:
+        type: array
+        items:
+          type: array
+          items:
+            type: integer
+            format: int64
+    required: [results]
   dices:
     type: object
     description: the result of a dice throw.
